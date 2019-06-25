@@ -27,6 +27,11 @@ export class PokemonMapComponent implements OnInit {
 
   returnService: any;
 
+  objOrigin = {'lat': 0, 'lon': 0, 'local': ''};
+  objDestination = {'lat': 0, 'lon': 0, 'local': ''};
+  responseOrigin: any;
+  responseDestination: any;
+
   constructor(
       private messageService: MessageService,
       private mapService: MapService
@@ -34,7 +39,7 @@ export class PokemonMapComponent implements OnInit {
 
   ngOnInit() {
 
-      this.options = {
+    this.options = {
         center: {lat: 36.890257, lng: 30.707417},
         zoom: 12
     };
@@ -42,7 +47,6 @@ export class PokemonMapComponent implements OnInit {
     this.initOverlays();
 
     this.infoWindow = new google.maps.InfoWindow();
-    console.log('rewth-> ', this.infoWindow);
 
   }
 
@@ -68,9 +72,22 @@ handleOverlayClick(event) {
 }
 
 addMarker() {
-    this.overlays.push(new google.maps.Marker({position:{lat: this.selectedPosition.lat(), lng: this.selectedPosition.lng()}, title:this.markerTitle, draggable: this.draggable}));
-    this.markerTitle = null;
-    this.dialogVisible = true;
+    if(this.objDestination.lat !== 0 && this.objOrigin.lat) {
+        alert('Clean to a new consult!');
+        return false;
+    }
+
+    if(this.objOrigin.lat === 0) {
+        this.objOrigin.lat = this.selectedPosition.lat();
+        this.objOrigin.lon = this.selectedPosition.lng();    
+        this.searchPlace(this.objOrigin.lat, this.objOrigin.lon, true);    
+    } else {
+        this.objDestination.lat = this.selectedPosition.lat();
+        this.objDestination.lon = this.selectedPosition.lng();
+        this.searchPlace(this.objDestination.lat, this.objDestination.lon, false);        
+    }
+ 
+    this.overlays.push(new google.maps.Marker({position:{lat: this.selectedPosition.lat(), lng: this.selectedPosition.lng()}, title:this.markerTitle }));
 }
 
 handleDragEnd(event) {
@@ -89,21 +106,37 @@ initOverlays() {
             ], strokeOpacity: 0.5, strokeWeight: 1,fillColor: '#1976D2', fillOpacity: 0.35
             }),
             //new google.maps.Circle({center: {lat: 36.90707, lng: 30.56533}, fillColor: '#1976D2', fillOpacity: 0.35, strokeWeight: 1, radius: 1500}),
-            //new google.maps.Polyline({path: [{lat: 36.86149, lng: 30.63743},{lat: 36.86341, lng: 30.72463}], geodesic: true, strokeColor: '#FF0000', strokeOpacity: 0.5, strokeWeight: 2})
+            new google.maps.Polyline({path: [{lat: 36.86149, lng: 30.63743},{lat: 36.86341, lng: 30.72463}], geodesic: true, strokeColor: '#FF0000', strokeOpacity: 0.5, strokeWeight: 2})
         ];
     }
 }
 
-zoomIn(map) {
-    map.setZoom(map.getZoom()+1);
+
+calculate() {
+
 }
 
-zoomOut(map) {
-    map.setZoom(map.getZoom()-1);
+searchPlace(lat, lon, flag){
+debugger;
+    this.mapService.getLocate(lat, lon).subscribe(
+        data => {
+            if(data) {
+                if(flag) this.responseOrigin = data.display_name.split(","); 
+                else this.responseDestination = data.display_name.split(",");
+            }
+        }, error => {
+            console.error();            
+        }
+    );
 }
 
 clear() {
     this.overlays = [];
+    this.selectedPosition = false;
+    this.objOrigin = {'lat': 0, 'lon': 0, 'local': ''};
+    this.objDestination = {'lat': 0, 'lon': 0, 'local': ''};
+    this.responseOrigin = '';
+    this.responseDestination = '';
 }  
 
 

@@ -3,7 +3,6 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { CarouselModule } from 'primeng/carousel';
 import { PanelMenuModule } from 'primeng/panelmenu';
-import { SplitButtonModule } from 'primeng/splitbutton';
 
 import { routing } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +13,7 @@ import { PokemonCityComponent } from './pokemon-city/pokemon-city.component';
 import { PokemonHelpComponent } from './pokemon-help/pokemon-help.component';
 import { PokemonMapComponent } from './pokemon-map/pokemon-map.component';
 import { PokemonIndexComponent } from './pokemon-index/pokemon-index.component';
+import { HttpClientModule } from '@angular/common/http'; 
 
 import { GMapModule } from 'primeng/gmap';
 
@@ -33,7 +33,8 @@ import { GMapModule } from 'primeng/gmap';
     TabMenuModule,
     CarouselModule,
     PanelMenuModule,
-    GMapModule
+    GMapModule,
+    HttpClientModule
   ],
   providers: [MessageService],
   bootstrap: [AppComponent],
